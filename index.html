@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MALWARE ARCHIVE · BACKROOMS: ЗАРАЖЕНИЕ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #050a0f;
+            font-family: 'Courier New', 'Consolas', monospace;
+            color: #9effcf;
+            padding: 1.5rem;
+        }
+
+        .crt {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,255,0,0.03) 0px, rgba(0,255,0,0.03) 1px, transparent 1px, transparent 4px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #07111a;
+            border: 1px solid #1e8a5c;
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(0,255,100,0.1);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: #2eff9e;
+            text-shadow: 0 0 5px #008844;
+            letter-spacing: -1px;
+        }
+
+        .sub {
+            color: #5d9e7a;
+            border-left: 3px solid #2ecc71;
+            padding-left: 1rem;
+            margin: 0.8rem 0 1.5rem 0;
+        }
+
+        /* Легенда классификации */
+        .legend-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: #0a121e;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border: 1px dashed #2c6b48;
+        }
+        .legend-item {
+            font-size: 0.7rem;
+            background: #111c24;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+        }
+        .level-badge {
+            display: inline-block;
+            width: 28px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-right: 0.4rem;
+        }
+        .level-0 { background: #2c5a3a; }
+        .level-1 { background: #3a6b32; }
+        .level-2 { background: #5e7a2a; }
+        .level-3 { background: #b8860b; color: #1a1a1a; }
+        .level-4 { background: #cd5c5c; }
+        .level-5 { background: #b22222; }
+        .level-6 { background: #8b0000; }
+        .level-7 { background: #4a0e4e; }
+        .level-8 { background: #1a0a2e; }
+        .level-9 { background: #0a0a0a; color: #ff4444; text-shadow: 0 0 2px red; }
+
+        /* фильтры */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #0a1018;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #0e1622;
+            padding: 0.3rem 0.8rem;
+        }
+        select, input {
+            background: #03070c;
+            border: 1px solid #2c8f5a;
+            color: #b3ffcf;
+            padding: 0.3rem;
+            font-family: monospace;
+        }
+
+        .malware-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .mal-card {
+            background: #0b1420;
+            border: 1px solid #226644;
+            padding: 1.2rem;
+            transition: 0.1s linear;
+        }
+        .mal-card:hover {
+            border-color: #2aff95;
+            box-shadow: 0 0 10px #00aa55;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #2a6b48;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.7rem;
+            flex-wrap: wrap;
+        }
+        .mal-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffbc6e;
+        }
+        .class-tag {
+            font-size: 0.8rem;
+            background: #00000066;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.8rem;
+            font-size: 0.7rem;
+        }
+        .stat {
+            background: #07100b;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+        }
+
+        .section-title {
+            color: #5effb2;
+            margin: 0.8rem 0 0.3rem 0;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border-left: 2px solid #2ecc71;
+            padding-left: 0.5rem;
+        }
+
+        .text-sm {
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .case {
+            background: #030b0f;
+            padding: 0.6rem;
+            margin-top: 0.5rem;
+            border-left: 2px solid #ff9955;
+        }
+
+        .detect-badge {
+            display: inline-block;
+            background: #2a2a1a;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+
+        button {
+            background: #1c4f30;
+            border: none;
+            color: white;
+            padding: 0.4rem 1rem;
+            font-family: monospace;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2ecc71;
+            color: black;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #5effb2;
+        }
+
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #3f7553;
+            border-top: 1px solid #1e553a;
+            padding-top: 1rem;
+        }
+
+        @media (max-width: 680px) {
+            .container { padding: 1rem; }
+            .malware-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="crt"></div>
+<div class="container">
+    <header>
+        <h1>🦠 MALWARE ARCHIVE · BACKROOMS</h1>
+        <div class="sub">> Классификация угроз по уровням 0-9 и типам A-H | Отдельные JSON-файлы</div>
+    </header>
+
+    <!-- Легенда уровней -->
+    <div class="legend-grid">
+        <div class="legend-item"><span class="level-badge level-0">0</span>Neutrum</div>
+        <div class="legend-item"><span class="level-badge level-1">1</span>Minoris</div>
+        <div class="legend-item"><span class="level-badge level-2">2</span>Notabilis</div>
+        <div class="legend-item"><span class="level-badge level-3">3</span>Gravis</div>
+        <div class="legend-item"><span class="level-badge level-4">4</span>Periculosus</div>
+        <div class="legend-item"><span class="level-badge level-5">5</span>Exitialis</div>
+        <div class="legend-item"><span class="level-badge level-6">6</span>Catastropha</div>
+        <div class="legend-item"><span class="level-badge level-7">7</span>Tenebris</div>
+        <div class="legend-item"><span class="level-badge level-8">8</span>Abyssus</div>
+        <div class="legend-item"><span class="level-badge level-9">9</span>Terminus</div>
+    </div>
+
+    <!-- Типы малвари -->
+    <div class="legend-grid" style="margin-top: -1rem;">
+        <div class="legend-item">A=Adsurgens(реклама)</div>
+        <div class="legend-item">B=Burglator(вор)</div>
+        <div class="legend-item">C=Corruptor(вандал)</div>
+        <div class="legend-item">D=Delator(шпион)</div>
+        <div class="legend-item">E=Exactor(вымогатель)</div>
+        <div class="legend-item">F=Furtivus(руткит)</div>
+        <div class="legend-item">G=Globulus(червь)</div>
+        <div class="legend-item">H=Hostilis(бэкдор)</div>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="filters">
+        <div class="filter-group">
+            <span>📊 Уровень:</span>
+            <select id="levelFilter">
+                <option value="all">Все</option>
+                <option value="0">0 - Neutrum</option>
+                <option value="1">1 - Minoris</option>
+                <option value="2">2 - Notabilis</option>
+                <option value="3">3 - Gravis</option>
+                <option value="4">4 - Periculosus</option>
+                <option value="5">5 - Exitialis</option>
+                <option value="6">6 - Catastropha</option>
+                <option value="7">7 - Tenebris</option>
+                <option value="8">8 - Abyssus</option>
+                <option value="9">9 - Terminus</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <span>🔤 Тип:</span>
+            <select id="typeFilter">
+                <option value="all">Все</option>
+                <option value="A">A - Реклама</option>
+                <option value="B">B - Вор</option>
+                <option value="C">C - Вандал</option>
+                <option value="D">D - Шпион</option>
+                <option value="E">E - Вымогатель</option>
+                <option value="F">F - Руткит</option>
+                <option value="G">G - Червь</option>
+                <option value="H">H - Бэкдор</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <span>🔍 Поиск:</span>
+            <input type="text" id="searchFilter" placeholder="имя / описание" style="width: 180px;">
+        </div>
+        <button id="resetFilters">Сброс</button>
+    </div>
+
+    <div id="malwareGrid" class="malware-grid">
+        <div class="loading">🔄 ЗАГРУЗКА БАЗЫ ДАННЫХ ВИРУСОВ...</div>
+    </div>
+
+    <footer>
+        [ B.D.A. ] — Каждый вирус хранится в отдельном JSON. Данные подгружаются динамически.
+    </footer>
+</div>
+
+<script>
+    // Список всех JSON-файлов (можно пополнять)
+    const malwareFiles = [
+        "data/1.json",
+        "data/2.json",
+        "data/3.json",
+        "data/4.json",
+        "data/5.json"
+    ];
+
+    let allMalware = [];
+
+    // Загрузка всех JSON
+    async function loadAllMalware() {
+        const grid = document.getElementById("malwareGrid");
+        grid.innerHTML = '<div class="loading">🔄 ЗАГРУЗКА ВИРУСОВ...</div>';
+        
+        const promises = malwareFiles.map(async (file) => {
+            try {
+                const response = await fetch(file);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.warn(`Не удалось загрузить ${file}:`, error);
+                return null;
+            }
+        });
+        
+        const results = await Promise.all(promises);
+        allMalware = results.filter(m => m !== null);
+        
+        if (allMalware.length === 0) {
+            grid.innerHTML = '<div class="loading">⚠️ НЕТ ДОСТУПНЫХ ЗАПИСЕЙ. ДОБАВЬ JSON В ПАПКУ DATA/</div>';
+        } else {
+            applyFilters();
+        }
+    }
+
+    // Рендер карточек
+    function renderMalware(malwareList) {
+        const grid = document.getElementById("malwareGrid");
+        
+        if (malwareList.length === 0) {
+            grid.innerHTML = '<div class="loading">🔍 НЕТ ВИРУСОВ, СООТВЕТСТВУЮЩИХ ФИЛЬТРАМ</div>';
+            return;
+        }
+        
+        grid.innerHTML = malwareList.map(m => {
+            const levelClass = `level-${m.level}`;
+            // детектируемость в процентах
+            const detectColor = m.detectability >= 70 ? '#5effb2' : (m.detectability >= 40 ? '#ffcc66' : '#ff6666');
+            
+            return `
+                <div class="mal-card">
+                    <div class="card-header">
+                        <span class="mal-name">🦠 ${escapeHtml(m.name)}</span>
+                        <span class="class-tag">
+                            <span class="level-badge ${levelClass}">${m.level}</span>
+                            <span style="background:#1e3327; padding:2px 6px; border-radius:12px;">${m.type}</span>
+                        </span>
+                    </div>
+                    
+                    <div class="stats">
+                        <span class="stat">📊 Класс: ${m.class_description || getLevelName(m.level)}</span>
+                        <span class="stat">🔍 Детектируемость: <span style="color:${detectColor};">${m.detectability}%</span></span>
+                        <span class="stat">🌍 Распространённость: ${m.prevalence}</span>
+                    </div>
+                    
+                    <div class="stats">
+                        <span class="stat">📀 Формат: ${m.format}</span>
+                        <span class="stat">📦 Переносчики: ${m.vectors}</span>
+                    </div>
+                    
+                    <div class="section-title">⚙️ ОПИСАНИЕ ДЕЙСТВИЯ</div>
+                    <div class="text-sm">${escapeHtml(m.action_description)}</div>
+                    
+                    <div class="section-title">📋 РЕАЛЬНЫЙ КЕЙС ЗАРАЖЕНИЯ</div>
+                    <div class="case text-sm">${escapeHtml(m.case_study)}</div>
+                    
+                    <div style="margin-top: 0.7rem; font-size:0.7rem; color:#5d9e7a;">
+                        🧬 Обнаружен: ${m.first_detected} | 🏷️ ID: ${m.id}
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+    
+    function getLevelName(level) {
+        const names = {
+            0: "Neutrum", 1: "Minoris", 2: "Notabilis", 3: "Gravis",
+            4: "Periculosus", 5: "Exitialis", 6: "Catastropha",
+            7: "Tenebris", 8: "Abyssus", 9: "Terminus"
+        };
+        return names[level] || "Unknown";
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function applyFilters() {
+        const level = document.getElementById("levelFilter").value;
+        const type = document.getElementById("typeFilter").value;
+        const search = document.getElementById("searchFilter").value.toLowerCase();
+        
+        let filtered = [...allMalware];
+        
+        if (level !== "all") {
+            filtered = filtered.filter(m => m.level == level);
+        }
+        if (type !== "all") {
+            filtered = filtered.filter(m => m.type === type);
+        }
+        if (search) {
+            filtered = filtered.filter(m => 
+                m.name.toLowerCase().includes(search) || 
+                m.action_description.toLowerCase().includes(search) ||
+                (m.case_study && m.case_study.toLowerCase().includes(search))
+            );
+        }
+        
+        renderMalware(filtered);
+    }
+    
+    // Навешиваем слушатели
+    function setupFilters() {
+        document.getElementById("levelFilter").addEventListener("change", applyFilters);
+        document.getElementById("typeFilter").addEventListener("change", applyFilters);
+        document.getElementById("searchFilter").addEventListener("input", applyFilters);
+        document.getElementById("resetFilters").addEventListener("click", () => {
+            document.getElementById("levelFilter").value = "all";
+            document.getElementById("typeFilter").value = "all";
+            document.getElementById("searchFilter").value = "";
+            applyFilters();
+        });
+    }
+    
+    // Старт
+    loadAllMalware();
+    setupFilters();
+</script>
+</body>
+</html>
